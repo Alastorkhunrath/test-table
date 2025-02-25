@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+</head>
+<body>
+    
+    <table id="data-table">
+        <thead>
+            <tr>
+                <th>Показатель</th>
+                <th>Текущий день</th>
+                <th>Вчера</th>
+                <th>Этот день недели</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr data-values="500521,480521,4805121">
+                <td>Выручка, руб</td>
+                <td>500 521</td>
+                <td>480 521</td>
+                <td>4 805 121</td>
+            </tr>
+            <tr data-values="300000,300000,300000">
+                <td>Наличные</td>
+                <td>300 000</td>
+                <td>300 000</td>
+                <td>300 000</td>
+            </tr>
+            <tr data-values="100521,100521,100521">
+                <td>Кредитные карты</td>
+                <td>100 521</td>
+                <td>100 521</td>
+                <td>100 521</td>
+            </tr>
+        </tbody>
+    </table>
+    
+    <div id="chart-container"></div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const tableRows = document.querySelectorAll("#data-table tbody tr");
+            const chartContainer = document.getElementById("chart-container");
+            
+            let chart = Highcharts.chart(chartContainer, {
+                chart: { type: 'line' },
+                title: { text: 'Данные по выбранному показателю' },
+                xAxis: { categories: ['Текущий день', 'Вчера', 'Этот день недели'] },
+                yAxis: { title: { text: 'Значение' } },
+                series: []
+            });
+            
+            tableRows.forEach(row => {
+                row.addEventListener("click", function () {
+                    tableRows.forEach(r => r.classList.remove("selected"));
+                    this.classList.add("selected");
+                    
+                    const values = this.getAttribute("data-values").split(",").map(Number);
+                    const label = this.cells[0].innerText;
+                    
+                    chart.series[0]?.remove();
+                    chart.addSeries({
+                        name: label,
+                        data: values
+                    });
+                });
+            });
+        });
+    </script>
+</body>
+</html>
